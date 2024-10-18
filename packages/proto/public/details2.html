@@ -1,0 +1,267 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Listing Details | SubLet</title>
+
+    <!-- Favicon -->
+    <link rel="icon" href="https://img.icons8.com/?size=100&id=15466&format=png&color=000000" type="image/png">
+
+    <!-- Linking to design tokens and the main CSS file -->
+    <link rel="stylesheet" href="/styles/tokens.css">
+    <link rel="stylesheet" href="/styles/page.css">
+    <link rel="stylesheet" href="/styles/index.css">
+
+    <!-- Font Awesome for Icons -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
+
+    <style>
+        body {
+            font-family: 'Helvetica Neue', Arial, sans-serif;
+            margin: 0;
+            padding: 0;
+            background-color: #f5f5f5;
+        }
+
+        header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            background-color: #007BFF;
+            color: white;
+            padding: 20px;
+            box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+        }
+
+        header h1 {
+            margin: 0;
+            font-size: 24px;
+        }
+
+        .login-signup-container {
+            display: flex;
+            gap: 10px;
+        }
+
+        .login-button,
+        .signup-button {
+            background-color: white;
+            color: #007BFF;
+            border: none;
+            border-radius: 4px;
+            padding: 10px 15px;
+            cursor: pointer;
+            transition: background-color 0.3s;
+        }
+
+        .login-button:hover,
+        .signup-button:hover {
+            background-color: #e1e1e1;
+        }
+
+        .container {
+            max-width: 1200px;
+            margin: 20px auto;
+            padding: 20px;
+            background-color: white;
+            border-radius: 8px;
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+        }
+
+        .image-slider {
+            border-radius: 8px;
+            overflow: hidden;
+            margin-bottom: 20px;
+        }
+
+        .image-slider img {
+            width: 100%;
+            max-height: 500px;
+            object-fit: cover;
+        }
+
+        .details-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 20px 0;
+        }
+
+        .listing-title {
+            font-size: 28px;
+            font-weight: bold;
+            margin: 0;
+        }
+
+        .listing-info {
+            font-size: 16px;
+            color: #666;
+        }
+
+        .lister-info {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        .lister-name {
+            font-weight: bold;
+            color: #007BFF;
+        }
+
+        .description {
+            margin-top: 20px;
+            line-height: 1.6;
+            color: #444;
+        }
+
+        .amenities {
+            margin-top: 20px;
+            padding: 10px;
+            border: 1px solid #e1e1e1;
+            border-radius: 5px;
+            background-color: #f9f9f9;
+        }
+
+        .amenities h3 {
+            margin-top: 0;
+            color: #007BFF;
+        }
+
+        .amenities ul {
+            list-style: none;
+            padding: 0;
+        }
+
+        .amenities li {
+            margin: 10px 0;
+            display: flex;
+            align-items: center;
+        }
+
+        .amenities i {
+            color: #007BFF;
+            margin-right: 8px;
+        }
+
+        .booking-section {
+            margin-top: 20px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .price {
+            font-size: 24px;
+            font-weight: bold;
+            color: #007BFF;
+        }
+
+        .book-button {
+            background-color: #007BFF;
+            color: white;
+            padding: 12px 20px;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+            font-size: 16px;
+            transition: background-color 0.3s;
+        }
+
+        .book-button:hover {
+            background-color: #0056b3;
+        }
+
+        .message-button {
+            background-color: #f1f1f1;
+            color: #333;
+            width: 40px;
+            height: 40px;
+            border: none;
+            border-radius: 50%;
+            cursor: pointer;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+            transition: background-color 0.3s;
+        }
+
+        .message-button:hover {
+            background-color: #e1e1e1;
+        }
+
+        .message-button i {
+            color: #007BFF;
+        }
+
+        footer {
+            text-align: center;
+            padding: 20px;
+            background-color: #f5f5f5;
+            border-top: 1px solid #e1e1e1;
+        }
+    </style>
+</head>
+
+<body>
+
+    <!-- Header section -->
+    <header>
+        <h1>SubLet</h1>
+        <div class="login-signup-container">
+            <button class="login-button">Log In</button>
+            <button class="signup-button">Sign Up</button>
+        </div>
+    </header>
+
+    <div class="container">
+        <!-- Image Slider -->
+        <div class="image-slider">
+            <img src="images/image2.jpg" alt="Listing Image 2">
+        </div>
+
+        <!-- Listing Title and Info -->
+        <div class="details-header">
+            <h2 class="listing-title">830 Orcutt Rd, San Luis Obispo, CA 93401</h2>
+            <div class="lister-info">
+                <span class="lister-name">Jane Smith</span>
+                <button class="message-button"><i class="fas fa-comment"></i></button>
+            </div>
+        </div>
+
+        <p class="listing-info">3 Beds · 2 Baths · San Luis Obispo, CA</p>
+
+        <!-- Description -->
+        <div class="description">
+            <h3>Description</h3>
+            <p>This spacious 3-bedroom house is ideal for families or groups. Located close to shopping centers and parks, this home offers a large living area, a backyard perfect for gatherings, and a fully equipped kitchen to make your stay comfortable.</p>
+        </div>
+
+        <!-- Amenities Section -->
+        <div class="amenities">
+            <h3>Amenities</h3>
+            <ul>
+                <li><i class="fas fa-wifi"></i>Free Wi-Fi</li>
+                <li><i class="fas fa-parking"></i>Free Parking</li>
+                <li><i class="fas fa-swimming-pool"></i>Swimming Pool</li>
+                <li><i class="fas fa-fire"></i>Fireplace</li>
+                <li><i class="fas fa-grill"></i>BBQ Grill</li>
+            </ul>
+        </div>
+
+        <!-- Booking Section -->
+        <div class="booking-section">
+            <div class="price">$1800/month</div>
+            <button class="book-button">Book Now</button>
+        </div>
+    </div>
+
+    <footer>
+        &copy; 2024 SubLet | All Rights Reserved
+    </footer>
+</body>
+
+</html>
