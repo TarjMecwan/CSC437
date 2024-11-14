@@ -1,11 +1,25 @@
 /* tokens.css */
 
-/* Colors */
+/* Light Mode Colors */
 :root {
-    --color-background-page: #f0f0f0;
-    --color-text: #333333;
-    --color-background-header: #4a90e2;
-    --color-text-header: #ffffff;
-    --color-link: #ff6347;
-  }
-  
+  --color-background-page: #f0f0f0;
+  --color-text: #333333;
+  --color-background-header: #4a90e2;
+  --color-text-header: #ffffff;
+  --color-link: #ff6347;
+  --color-background-card: #ffffff;
+  --color-accent: #007BFF;
+  --color-text-control: #ffffff;
+}
+
+/* Dark Mode Colors */
+body.dark-mode {
+  --color-background-page: #121212;
+  --color-text: #e0e0e0;
+  --color-background-header: #333333;
+  --color-text-header: #ffffff;
+  --color-link: #ff6347;
+  --color-background-card: #1e1e1e;
+  --color-accent: #ff6347;
+  --color-text-control: #121212;
+}
