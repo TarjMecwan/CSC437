@@ -1,6 +1,5 @@
 <!DOCTYPE html>
 <html lang="en">
-
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
@@ -12,16 +11,18 @@
     <!-- Linking to design tokens and the main CSS file -->
     <link rel="stylesheet" href="/styles/tokens.css">
     <link rel="stylesheet" href="/styles/page.css">
-    <link rel="stylesheet" href="/styles/index.css">
 
+    <!-- Inline styles for layout and structure -->
     <style>
+        /* Basic styling */
         body {
             font-family: Arial, sans-serif;
             margin: 0;
             padding: 0;
-            background-color: #f8f8f8;
+            background-color: #f5f7fa;
         }
 
+        /* Header styling */
         header {
             display: flex;
             justify-content: space-between;
@@ -41,23 +42,21 @@
             gap: 10px;
         }
 
-        .login-button,
-        .signup-button,
-        .sublet-button { /* Add styling for the new button */
+        .login-button, .signup-button, .sublet-button {
             background-color: white;
             color: #007BFF;
             border: none;
             border-radius: 4px;
             padding: 10px 20px;
             cursor: pointer;
+            transition: background-color 0.3s ease;
         }
 
-        .login-button:hover,
-        .signup-button:hover,
-        .sublet-button:hover {
+        .login-button:hover, .signup-button:hover, .sublet-button:hover {
             background-color: #e1e1e1;
         }
 
+        /* Search bar styling */
         .search-bar {
             padding: 20px;
             text-align: center;
@@ -76,117 +75,63 @@
             width: 400px;
         }
 
-        /* Modal Styles */
-        .modal {
-            display: none;
-            position: fixed;
-            z-index: 1;
-            left: 0;
-            top: 0;
-            width: 100%;
-            height: 100%;
-            background-color: rgba(0, 0, 0, 0.5);
+        /* Listings container styling */
+        .listings-container {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+            gap: 20px;
+            padding: 40px 20px;
+            max-width: 1200px;
+            margin: 0 auto;
         }
 
-        .modal-content {
+        /* Card styling */
+        .listing-card {
             background-color: white;
-            margin: 10% auto;
-            padding: 20px;
-            border-radius: 10px;
-            width: 300px;
-            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+            border-radius: 12px;
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+            overflow: hidden;
+            transition: transform 0.2s ease, box-shadow 0.2s ease;
+            display: flex;
+            flex-direction: column;
             text-align: center;
         }
 
-        .close {
-            color: #aaa;
-            float: right;
-            font-size: 28px;
-            font-weight: bold;
-            cursor: pointer;
-        }
-
-        .close:hover,
-        .close:focus {
-            color: #000;
-        }
-
-        .modal h2 {
-            margin-top: 0;
-        }
-
-        .modal input[type="text"],
-        .modal input[type="password"],
-        .modal input[type="email"] {
-            width: 100%;
-            padding: 12px;
-            margin: 10px 0;
-            border: 1px solid #ccc;
-            border-radius: 5px;
-            box-sizing: border-box;
-        }
-
-        .modal button {
-            background-color: #007BFF;
-            color: white;
-            padding: 12px;
-            border: none;
-            border-radius: 5px;
-            cursor: pointer;
-            width: 100%;
-        }
-
-        .modal button:hover {
-            background-color: #0056b3;
-        }
-
-        .modal-footer {
-            margin-top: 15px;
-            font-size: 14px;
-        }
-
-        /* Listings & Cards */
-        .listings-container {
-            padding: 20px;
-            display: flex;
-            flex-wrap: wrap;
-            justify-content: center;
-        }
-
-        .listing-card {
-            background-color: white;
-            border-radius: 8px;
-            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
-            width: 300px;
-            margin: 10px;
-            overflow: hidden;
-            text-align: left;
+        .listing-card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 8px 16px rgba(0, 0, 0, 0.15);
         }
 
         .listing-card img {
             width: 100%;
             height: 200px;
             object-fit: cover;
+            border-bottom: 1px solid #ddd;
+            border-radius: 12px 12px 0 0;
         }
 
         .listing-info {
-            padding: 20px;
+            padding: 15px;
         }
 
         .listing-address {
-            font-size: 18px;
-            font-weight: bold;
-            margin-bottom: 10px;
-        }
-
-        .listing-details {
             font-size: 16px;
-            color: #666;
+            font-weight: bold;
+            color: #333;
+            margin-top: 10px;
         }
 
-        .distance {
+        .listing-host {
             font-size: 14px;
-            color: #888;
+            color: #666;
+            margin: 5px 0;
+        }
+
+        .listing-status {
+            font-size: 14px;
+            font-weight: bold;
+            color: #d9534f;
+            margin-bottom: 10px;
         }
 
         .details-button {
@@ -194,18 +139,25 @@
             color: white;
             padding: 10px;
             border: none;
-            border-radius: 5px;
+            border-radius: 0 0 12px 12px;
             cursor: pointer;
+            font-weight: bold;
+            transition: background-color 0.3s ease;
             width: 100%;
-            text-align: center;
         }
 
         .details-button:hover {
             background-color: #0056b3;
         }
     </style>
-</head>
 
+    <!-- Import map for @calpoly/mustang package -->
+    <script type="importmap">
+        { "imports": { "@calpoly/mustang": "https://unpkg.com/@calpoly/mustang" } }
+    </script>
+    <!-- Import the custom element module -->
+    <script type="module" src="/scripts/sublet-listing.js"></script>
+</head>
 <body>
 
     <!-- Header section -->
@@ -214,7 +166,7 @@
         <div class="login-signup-container">
             <button class="login-button" id="loginBtn">Log In</button>
             <button class="signup-button" id="signupBtn">Sign Up</button>
-            <button class="sublet-button" onclick="location.href='sublet.html'">Sublet Your Place</button> <!-- New button -->
+            <button class="sublet-button" onclick="location.href='sublet.html'">Sublet Your Place</button>
         </div>
     </header>
 
@@ -223,140 +175,56 @@
         <input type="text" id="search" placeholder="Search for listings..." oninput="searchListings()">
     </div>
 
-    <!-- Main content -->
+    <!-- Main content with listing cards in grid layout -->
     <main>
-        <h2 style="text-align:center">Featured Listings</h2>
+        <h2 style="text-align:center; margin-top: 20px;">Featured Listings</h2>
         <div class="listings-container" id="listings">
-            <!-- Listing cards -->
+            <!-- Converted listings using <sublet-listing> custom element -->
             <div class="listing-card">
                 <img src="images/image1.jpg" alt="House Image 1">
                 <div class="listing-info">
                     <p class="listing-address">555 Ramona Dr, San Luis Obispo, CA 93405</p>
-                    <p class="listing-details">2 Bed, 1 Bath - $1200/month</p>
-                    <p class="distance">1.5 miles away</p>
-                    <button class="details-button" onclick="location.href='details1.html'">Details</button>
+                    <p class="listing-host">Hosted by Lucius</p>
+                    <p class="listing-status">Coming November 27</p>
                 </div>
+                <button class="details-button" onclick="location.href='details1.html'">Details</button>
             </div>
+
             <div class="listing-card">
                 <img src="images/image2.jpg" alt="House Image 2">
                 <div class="listing-info">
                     <p class="listing-address">830 Orcutt Rd, San Luis Obispo, CA 93401</p>
-                    <p class="listing-details">3 Bed, 2 Bath - $1500/month</p>
-                    <p class="distance">2.3 miles away</p>
-                    <button class="details-button" onclick="location.href='details2.html'">Details</button>
+                    <p class="listing-host">Hosted by Delia Deetz</p>
+                    <p class="listing-status">Sold out</p>
                 </div>
+                <button class="details-button" onclick="location.href='details2.html'">Details</button>
             </div>
+
             <div class="listing-card">
                 <img src="images/image3.jpg" alt="House Image 3">
                 <div class="listing-info">
                     <p class="listing-address">1 Mustang Dr, San Luis Obispo, CA 93405</p>
-                    <p class="listing-details">1 Bed, 1 Bath - $1000/month</p>
-                    <p class="distance">0.8 miles away</p>
-                    <button class="details-button" onclick="location.href='details3.html'">Details</button>
+                    <p class="listing-host">Hosted by Wendy and Lisa</p>
+                    <p class="listing-status">Sold out</p>
                 </div>
+                <button class="details-button" onclick="location.href='details3.html'">Details</button>
             </div>
+
             <div class="listing-card">
                 <img src="images/image4.png" alt="House Image 4">
                 <div class="listing-info">
                     <p class="listing-address">Poly Canyon Village, 1 Grand Ave, San Luis Obispo, CA 93410</p>
-                    <p class="listing-details">Studio - $900/month</p>
-                    <p class="distance">1.0 miles away</p>
-                    <button class="details-button" onclick="location.href='details4.html'">Details</button>
+                    <p class="listing-host">Hosted by Ann</p>
+                    <p class="listing-status">Available now</p>
                 </div>
+                <button class="details-button" onclick="location.href='details4.html'">Details</button>
             </div>
         </div>
     </main>
 
     <!-- Footer -->
-    <footer style="text-align: center; padding: 20px;">
+    <footer>
         &copy; 2024 SubLet | All Rights Reserved
     </footer>
-
-    <!-- Login Modal Structure -->
-    <div id="loginModal" class="modal">
-        <div class="modal-content">
-            <span class="close" id="loginClose">&times;</span>
-            <h2>Log In</h2>
-            <input type="text" id="username" placeholder="Username" required>
-            <input type="password" id="password" placeholder="Password" required>
-            <button type="submit">Log In</button>
-            <div class="modal-footer">
-                <p>Don't have an account? <a href="#" id="openSignup">Sign Up</a></p>
-            </div>
-        </div>
-    </div>
-
-    <!-- Sign Up Modal Structure -->
-    <div id="signupModal" class="modal">
-        <div class="modal-content">
-            <span class="close" id="signupClose">&times;</span>
-            <h2>Sign Up</h2>
-            <input type="text" id="newUsername" placeholder="Username" required>
-            <input type="email" id="email" placeholder="Email" required>
-            <input type="password" id="newPassword" placeholder="Password" required>
-            <button type="submit">Sign Up</button>
-        </div>
-    </div>
-
-    <script>
-        // Open login modal
-        const loginBtn = document.getElementById('loginBtn');
-        const loginModal = document.getElementById('loginModal');
-        const loginClose = document.getElementById('loginClose');
-        const openSignup = document.getElementById('openSignup');
-
-        loginBtn.onclick = function () {
-            loginModal.style.display = 'block';
-        }
-
-        loginClose.onclick = function () {
-            loginModal.style.display = 'none';
-        }
-
-        openSignup.onclick = function () {
-            loginModal.style.display = 'none';
-            signupModal.style.display = 'block';
-        }
-
-        // Open sign-up modal
-        const signupBtn = document.getElementById('signupBtn');
-        const signupModal = document.getElementById('signupModal');
-        const signupClose = document.getElementById('signupClose');
-
-        signupBtn.onclick = function () {
-            signupModal.style.display = 'block';
-        }
-
-        signupClose.onclick = function () {
-            signupModal.style.display = 'none';
-        }
-
-        // Close modal on outside click
-        window.onclick = function (event) {
-            if (event.target === loginModal) {
-                loginModal.style.display = 'none';
-            }
-            if (event.target === signupModal) {
-                signupModal.style.display = 'none';
-            }
-        }
-
-        // Search function (for demonstration purposes)
-        function searchListings() {
-            const input = document.getElementById('search');
-            const filter = input.value.toLowerCase();
-            const listings = document.getElementById('listings').getElementsByClassName('listing-card');
-
-            for (let i = 0; i < listings.length; i++) {
-                const address = listings[i].getElementsByClassName('listing-address')[0].innerText.toLowerCase();
-                if (address.includes(filter)) {
-                    listings[i].style.display = '';
-                } else {
-                    listings[i].style.display = 'none';
-                }
-            }
-        }
-    </script>
 </body>
-
 </html>
