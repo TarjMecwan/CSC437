@@ -66,25 +66,6 @@
             color: var(--color-text-header);
         }
 
-        /* Search bar styling */
-        .search-bar {
-            padding: 20px;
-            text-align: center;
-        }
-
-        .search-bar input[type="text"] {
-            width: 300px;
-            padding: 10px;
-            font-size: 16px;
-            border-radius: 50px;
-            border: 1px solid #ccc;
-            transition: width 0.4s ease-in-out;
-        }
-
-        .search-bar input[type="text"]:focus {
-            width: 400px;
-        }
-
         /* Listings container styling */
         .listings-container {
             display: grid;
@@ -95,79 +76,26 @@
             margin: 0 auto;
         }
 
-        /* Card styling */
-        .listing-card {
+        /* Custom element styling */
+        room-listing {
+            display: block;
             background-color: var(--color-background-card);
             color: var(--color-text);
             border-radius: 12px;
             box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
             overflow: hidden;
             transition: transform 0.2s ease, box-shadow 0.2s ease;
-            display: flex;
-            flex-direction: column;
-            text-align: center;
         }
 
-        .listing-card:hover {
+        room-listing:hover {
             transform: translateY(-5px);
             box-shadow: 0 8px 16px rgba(0, 0, 0, 0.15);
         }
-
-        .listing-card img {
-            width: 100%;
-            height: 200px;
-            object-fit: cover;
-            border-bottom: 1px solid #ddd;
-            border-radius: 12px 12px 0 0;
-        }
-
-        .listing-info {
-            padding: 15px;
-        }
-
-        .listing-address {
-            font-size: 16px;
-            font-weight: bold;
-            color: var(--color-text);
-            margin-top: 10px;
-        }
-
-        .listing-host {
-            font-size: 14px;
-            color: #666;
-            margin: 5px 0;
-        }
-
-        .listing-status {
-            font-size: 14px;
-            font-weight: bold;
-            color: #d9534f;
-            margin-bottom: 10px;
-        }
-
-        .details-button {
-            background-color: var(--color-accent);
-            color: var(--color-text-control);
-            padding: 10px;
-            border: none;
-            border-radius: 0 0 12px 12px;
-            cursor: pointer;
-            font-weight: bold;
-            transition: background-color 0.3s ease;
-            width: 100%;
-        }
-
-        .details-button:hover {
-            background-color: #0056b3;
-        }
     </style>
 
-    <!-- Import map for @calpoly/mustang package -->
-    <script type="importmap">
-        { "imports": { "@calpoly/mustang": "https://unpkg.com/@calpoly/mustang" } }
-    </script>
-    <!-- Import the custom element module and dark mode script -->
-    <script type="module" src="/scripts/sublet-listing.js"></script>
+    <!-- Import the custom element module -->
+    <script type="module" src="/scripts/room-listing.js"></script>
+    <script type="module" src="/scripts/room-listings.js"></script>
     <script type="module" src="/scripts/darkMode.js"></script>
 </head>
 <body>
@@ -191,50 +119,12 @@
         <input type="text" id="search" placeholder="Search for listings..." oninput="searchListings()">
     </div>
 
-    <!-- Main content with listing cards in grid layout -->
+    <!-- Main content with room-listing custom element -->
     <main>
         <h2 style="text-align:center; margin-top: 20px;">Featured Listings</h2>
         <div class="listings-container" id="listings">
-            <!-- Converted listings using <sublet-listing> custom element -->
-            <div class="listing-card">
-                <img src="images/image1.jpg" alt="House Image 1">
-                <div class="listing-info">
-                    <p class="listing-address">555 Ramona Dr, San Luis Obispo, CA 93405</p>
-                    <p class="listing-host">Hosted by Lucius</p>
-                    <p class="listing-status">Coming November 27</p>
-                </div>
-                <button class="details-button" onclick="location.href='details1.html'">Details</button>
-            </div>
-
-            <div class="listing-card">
-                <img src="images/image2.jpg" alt="House Image 2">
-                <div class="listing-info">
-                    <p class="listing-address">830 Orcutt Rd, San Luis Obispo, CA 93401</p>
-                    <p class="listing-host">Hosted by Delia Deetz</p>
-                    <p class="listing-status">Sold out</p>
-                </div>
-                <button class="details-button" onclick="location.href='details2.html'">Details</button>
-            </div>
-
-            <div class="listing-card">
-                <img src="images/image3.jpg" alt="House Image 3">
-                <div class="listing-info">
-                    <p class="listing-address">1 Mustang Dr, San Luis Obispo, CA 93405</p>
-                    <p class="listing-host">Hosted by Wendy and Lisa</p>
-                    <p class="listing-status">Sold out</p>
-                </div>
-                <button class="details-button" onclick="location.href='details3.html'">Details</button>
-            </div>
-
-            <div class="listing-card">
-                <img src="images/image4.png" alt="House Image 4">
-                <div class="listing-info">
-                    <p class="listing-address">Poly Canyon Village, 1 Grand Ave, San Luis Obispo, CA 93410</p>
-                    <p class="listing-host">Hosted by Ann</p>
-                    <p class="listing-status">Available now</p>
-                </div>
-                <button class="details-button" onclick="location.href='details4.html'">Details</button>
-            </div>
+            <!-- Dynamic listings rendered by the custom element -->
+            <room-listings src="/api/rooms"></room-listings>
         </div>
     </main>
 
