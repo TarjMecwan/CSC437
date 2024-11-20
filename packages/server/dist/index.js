@@ -23,15 +23,37 @@ var __toESM = (mod, isNodeMode, target) => (target = mod != null ? __create(__ge
 ));
 var import_express = __toESM(require("express"));
 var import_path = __toESM(require("path"));
+var import_mongo = require("./services/mongo");
+var import_room_service = require("./services/room-service");
 const app = (0, import_express.default)();
 const port = process.env.PORT || 3e3;
-const staticDir = import_path.default.join(__dirname, "../../proto/public");
-app.use(import_express.default.static(staticDir));
-app.get("/api/hello", (req, res) => {
-  res.json({ message: "Hello from the backend!" });
+app.use(import_express.default.json());
+(0, import_mongo.connect)("lab10db");
+app.use(import_express.default.static(import_path.default.join(__dirname, "../../proto/public")));
+app.get("/api/rooms", async (req, res) => {
+  const rooms = await (0, import_room_service.getAllRooms)();
+  res.json(rooms);
+});
+app.get("/api/rooms/:id", async (req, res) => {
+  const room = await (0, import_room_service.getRoomById)(req.params.id);
+  if (!room) {
+    return res.status(404).json({ error: "Room not found" });
+  }
+  res.json(room);
+});
+app.post("/api/rooms", async (req, res) => {
+  const newRoom = await (0, import_room_service.createRoom)(req.body);
+  res.status(201).json(newRoom);
+});
+app.delete("/api/rooms/:id", async (req, res) => {
+  const result = await (0, import_room_service.deleteRoom)(req.params.id);
+  if (result.deletedCount === 0) {
+    return res.status(404).json({ error: "Room not found" });
+  }
+  res.status(204).send();
 });
 app.get("*", (req, res) => {
-  res.sendFile(import_path.default.join(staticDir, "index.html"));
+  res.sendFile(import_path.default.join(__dirname, "../../proto/public/index.html"));
 });
 app.listen(port, () => {
   console.log(`Server running at http://localhost:${port}`);
