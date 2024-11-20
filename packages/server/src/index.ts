@@ -1,49 +1,20 @@
-import express, { Request, Response } from "express";
+import express from "express";
 import path from "path";
-import { connect } from "./services/mongo";
-import { getAllRooms, getRoomById, createRoom, deleteRoom } from "./services/room-service";
+import { connect } from "./services/mongo"; // MongoDB connection
+import rooms from "./routes/rooms"; // Import the rooms router
 
 const app = express();
 const port = process.env.PORT || 3000;
 
-// Middleware for parsing JSON
-app.use(express.json());
-
 // Connect to MongoDB
-connect("lab10db");
+connect("lab10db"); // Replace "lab10db" with your database name if different
 
-// Serve static files
-app.use(express.static(path.join(__dirname, "../../proto/public")));
+// Middleware
+app.use(express.json()); // Parse JSON in request bodies
+app.use(express.static(path.join(__dirname, "../../proto/public"))); // Serve static files
 
-// API: Get all rooms
-app.get("/api/rooms", async (req: Request, res: Response) => {
-  const rooms = await getAllRooms();
-  res.json(rooms);
-});
-
-// API: Get a room by ID
-app.get("/api/rooms/:id", async (req: Request, res: Response) => {
-  const room = await getRoomById(req.params.id);
-  if (!room) {
-    return res.status(404).json({ error: "Room not found" });
-  }
-  res.json(room);
-});
-
-// API: Create a new room
-app.post("/api/rooms", async (req: Request, res: Response) => {
-  const newRoom = await createRoom(req.body);
-  res.status(201).json(newRoom);
-});
-
-// API: Delete a room by ID
-app.delete("/api/rooms/:id", async (req: Request, res: Response) => {
-  const result = await deleteRoom(req.params.id);
-  if (result.deletedCount === 0) {
-    return res.status(404).json({ error: "Room not found" });
-  }
-  res.status(204).send();
-});
+// Routes
+app.use("/api/rooms", rooms); // Mount the rooms router at /api/rooms
 
 // Catch-all route for frontend
 app.get("*", (req, res) => {

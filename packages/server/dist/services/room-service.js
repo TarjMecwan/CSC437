@@ -18,30 +18,44 @@ var __copyProps = (to, from, except, desc) => {
 var __toCommonJS = (mod) => __copyProps(__defProp({}, "__esModule", { value: true }), mod);
 var room_service_exports = {};
 __export(room_service_exports, {
-  createRoom: () => createRoom,
-  deleteRoom: () => deleteRoom,
-  getAllRooms: () => getAllRooms,
-  getRoomById: () => getRoomById
+  create: () => create,
+  default: () => room_service_default,
+  get: () => get,
+  index: () => index,
+  remove: () => remove,
+  update: () => update
 });
 module.exports = __toCommonJS(room_service_exports);
 var import_room = require("../models/room");
-async function getAllRooms() {
+async function index() {
   return await import_room.RoomModel.find();
 }
-async function getRoomById(id) {
+async function get(id) {
   return await import_room.RoomModel.findOne({ id });
 }
-async function createRoom(room) {
+async function create(room) {
   const newRoom = new import_room.RoomModel(room);
   return await newRoom.save();
 }
-async function deleteRoom(id) {
-  return await import_room.RoomModel.deleteOne({ id });
+async function update(id, updatedRoom) {
+  return await import_room.RoomModel.findOneAndUpdate({ id }, updatedRoom, { new: true }).then((room) => {
+    if (!room)
+      throw new Error(`${id} not updated`);
+    return room;
+  });
 }
+async function remove(id) {
+  return await import_room.RoomModel.findOneAndDelete({ id }).then((room) => {
+    if (!room)
+      throw new Error(`${id} not deleted`);
+  });
+}
+var room_service_default = { index, get, create, update, remove };
 // Annotate the CommonJS export names for ESM import in node:
 0 && (module.exports = {
-  createRoom,
-  deleteRoom,
-  getAllRooms,
-  getRoomById
+  create,
+  get,
+  index,
+  remove,
+  update
 });
