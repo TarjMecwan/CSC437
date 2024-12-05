@@ -10,8 +10,9 @@ const RoomSchema = new Schema<Room>({
   availableTo: { type: Date, required: true },
   description: { type: String },
   amenities: [String],
-  images: [String],
+  images: [String], // Store image paths or base64-encoded data
 });
+
 
 // Create the Room model
 const RoomModel = model<Room>("Room", RoomSchema);

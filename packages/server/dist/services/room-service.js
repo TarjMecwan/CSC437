@@ -50,6 +50,7 @@ const RoomSchema = new import_mongoose.Schema({
   description: { type: String },
   amenities: [String],
   images: [String]
+  // Store image paths or base64-encoded data
 });
 const RoomModel = (0, import_mongoose.model)("Room", RoomSchema);
 var room_service_default = {

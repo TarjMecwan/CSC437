@@ -31,26 +31,69 @@ __export(rooms_exports, {
 });
 module.exports = __toCommonJS(rooms_exports);
 var import_express = __toESM(require("express"));
+var import_multer = __toESM(require("multer"));
+var import_path = __toESM(require("path"));
 var import_room_service = __toESM(require("../services/room-service"));
+var import_auth = require("./auth");
 const router = import_express.default.Router();
+const storage = import_multer.default.diskStorage({
+  destination: "./uploads",
+  // Directory to store images
+  filename: (req, file, cb) => {
+    cb(null, `${Date.now()}-${file.originalname}`);
+  }
+});
+const upload = (0, import_multer.default)({ storage });
+router.use("/uploads", import_express.default.static(import_path.default.join(__dirname, "../../uploads")));
+router.post("/upload", import_auth.authenticateUser, upload.single("image"), (req, res) => {
+  if (!req.file) {
+    return res.status(400).json({ error: "No file uploaded" });
+  }
+  const filePath = `/uploads/${req.file.filename}`;
+  res.status(200).json({ path: filePath });
+});
 router.get("/", (_, res) => {
   import_room_service.default.index().then((list) => res.json(list)).catch((err) => res.status(500).send(err));
 });
 router.get("/:id", (req, res) => {
   const { id } = req.params;
-  import_room_service.default.get(id).then((room) => res.json(room)).catch((err) => res.status(404).send(err));
+  import_room_service.default.get(id).then((room) => {
+    if (!room) {
+      return res.status(404).json({ error: "Room not found" });
+    }
+    res.json(room);
+  }).catch((err) => res.status(500).send(err));
 });
-router.post("/", (req, res) => {
+router.post("/", import_auth.authenticateUser, (req, res) => {
   const newRoom = req.body;
-  import_room_service.default.create(newRoom).then((room) => res.status(201).json(room)).catch((err) => res.status(500).send(err));
+  import_room_service.default.create(newRoom).then((room) => res.status(201).json(room)).catch((err) => {
+    console.error("Error creating room:", err);
+    res.status(500).json({ error: "Failed to create room", details: err.message });
+  });
 });
-router.put("/:id", (req, res) => {
+router.put("/:id", import_auth.authenticateUser, (req, res) => {
   const { id } = req.params;
   const updatedRoom = req.body;
-  import_room_service.default.update(id, updatedRoom).then((room) => res.json(room)).catch((err) => res.status(404).send(err));
+  import_room_service.default.update(id, updatedRoom).then((room) => {
+    if (!room) {
+      return res.status(404).json({ error: "Room not found" });
+    }
+    res.json(room);
+  }).catch((err) => {
+    console.error("Error updating room:", err);
+    res.status(500).json({ error: "Failed to update room", details: err.message });
+  });
 });
-router.delete("/:id", (req, res) => {
+router.delete("/:id", import_auth.authenticateUser, (req, res) => {
   const { id } = req.params;
-  import_room_service.default.remove(id).then(() => res.status(204).end()).catch((err) => res.status(404).send(err));
+  import_room_service.default.remove(id).then((result) => {
+    if (!result) {
+      return res.status(404).json({ error: "Room not found" });
+    }
+    res.status(204).end();
+  }).catch((err) => {
+    console.error("Error deleting room:", err);
+    res.status(500).json({ error: "Failed to delete room", details: err.message });
+  });
 });
 var rooms_default = router;
