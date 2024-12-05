@@ -158,9 +158,9 @@
   <header>
     <h1>Welcome to SubLet</h1>
     <div class="login-signup-container">
-      <button class="login-button" id="loginBtn">Log In</button>
-      <button class="signup-button" id="signupBtn">Sign Up</button>
-      <button class="sublet-button hidden" id="subletBtn" onclick="location.href='sublet.html'">Sublet Your Place</button>
+      <button id="loginBtn">Log In</button>
+      <button id="signupBtn">Sign Up</button>
+      <button class="hidden" id="subletBtn" onclick="location.href='sublet.html'">Sublet Your Place</button>
     </div>
     <label>
       <input type="checkbox" id="darkModeToggle">
@@ -174,6 +174,34 @@
       <!-- Listings will be dynamically loaded here -->
     </div>
   </main>
+
+  <!-- Login Modal -->
+  <div class="modal" id="loginModal">
+    <div class="modal-content">
+      <h3>Log In</h3>
+      <form id="loginForm">
+        <label for="loginUsername">Username</label>
+        <input type="text" id="loginUsername" required>
+        <label for="loginPassword">Password</label>
+        <input type="password" id="loginPassword" required>
+        <button type="submit">Log In</button>
+      </form>
+    </div>
+  </div>
+
+  <!-- Signup Modal -->
+  <div class="modal" id="signupModal">
+    <div class="modal-content">
+      <h3>Sign Up</h3>
+      <form id="signupForm">
+        <label for="signupUsername">Username</label>
+        <input type="text" id="signupUsername" required>
+        <label for="signupPassword">Password</label>
+        <input type="password" id="signupPassword" required>
+        <button type="submit">Sign Up</button>
+      </form>
+    </div>
+  </div>
 
   <footer>
     &copy; 2024 SubLet | All Rights Reserved
@@ -196,26 +224,15 @@
           return;
         }
 
-        const listingsHTML = listings.map(listing => {
-          const imageUrl = listing.images?.[0]
-            ? `${baseURL}${listing.images[0]}`
-            : "/default-image.png";
-
-          console.log("Image URL:", imageUrl); // Debugging: Log the image URL to the console
-
-          return `
-            <div class="listing">
-              <img src="${imageUrl}" 
-                   alt="${listing.title}" 
-                   class="listing-image" 
-                   onerror="this.src='/default-image.png'; console.error('Failed to load:', '${imageUrl}')">
-              <h3>${listing.title}</h3>
-              <p>${listing.description}</p>
-              <p><strong>Price:</strong> $${listing.price}</p>
-              <button onclick="location.href='/listings/${listing._id}'">View Details</button>
-            </div>
-          `;
-        }).join("");
+        const listingsHTML = listings.map(listing => `
+          <div class="listing">
+            <img src="${listing.images?.[0] ? `${baseURL}${listing.images[0]}` : '/default-image.png'}" alt="${listing.title}" class="listing-image">
+            <h3>${listing.title}</h3>
+            <p>${listing.description}</p>
+            <p><strong>Price:</strong> $${listing.price}</p>
+            <button onclick="location.href='/listings/${listing._id}'">View Details</button>
+          </div>
+        `).join("");
 
         listingsContainer.innerHTML = listingsHTML;
       } catch (error) {
@@ -224,21 +241,72 @@
       }
     }
 
-    document.addEventListener("DOMContentLoaded", () => {
-      fetchListings();
-    });
+    async function handleLogin(event) {
+      event.preventDefault();
+      const username = document.getElementById("loginUsername").value;
+      const password = document.getElementById("loginPassword").value;
 
-    function isLoggedIn() {
-      const token = localStorage.getItem("authToken");
-      return !!token;
+      try {
+        const response = await fetch("/auth/login", {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({ username, password }),
+        });
+
+        if (!response.ok) throw new Error("Invalid credentials");
+
+        const data = await response.json();
+        localStorage.setItem("authToken", data.token);
+        alert("Logged in successfully!");
+        toggleSubletButton();
+        document.getElementById("loginModal").classList.remove("active");
+      } catch (error) {
+        alert(error.message);
+      }
+    }
+
+    async function handleSignup(event) {
+      event.preventDefault();
+      const username = document.getElementById("signupUsername").value;
+      const password = document.getElementById("signupPassword").value;
+
+      try {
+        const response = await fetch("/auth/register", {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({ username, password }),
+        });
+
+        if (!response.ok) throw new Error("Signup failed");
+
+        alert("Signup successful! Please log in.");
+        document.getElementById("signupModal").classList.remove("active");
+      } catch (error) {
+        alert(error.message);
+      }
     }
 
     function toggleSubletButton() {
+      const token = localStorage.getItem("authToken");
       const subletBtn = document.getElementById("subletBtn");
-      subletBtn.classList.toggle("hidden", !isLoggedIn());
+      subletBtn.classList.toggle("hidden", !token);
     }
 
-    document.addEventListener("DOMContentLoaded", toggleSubletButton);
+    document.addEventListener("DOMContentLoaded", () => {
+      fetchListings();
+      toggleSubletButton();
+
+      document.getElementById("loginBtn").addEventListener("click", () => {
+        document.getElementById("loginModal").classList.add("active");
+      });
+
+      document.getElementById("signupBtn").addEventListener("click", () => {
+        document.getElementById("signupModal").classList.add("active");
+      });
+
+      document.getElementById("loginForm").addEventListener("submit", handleLogin);
+      document.getElementById("signupForm").addEventListener("submit", handleSignup);
+    });
 
     const darkModeToggle = document.getElementById("darkModeToggle");
     darkModeToggle.addEventListener("change", () => {
