@@ -1,34 +1,56 @@
-import { RoomModel } from "../models/room";
+import { Schema, model } from "mongoose";
+import { Room } from "../models/room"; // Import the Room interface
 
-// Get all rooms
-export async function index() {
-  return await RoomModel.find();
-}
+// Define the Room schema
+const RoomSchema = new Schema<Room>({
+  title: { type: String, required: true },
+  location: { type: String, required: true },
+  price: { type: Number, required: true },
+  availableFrom: { type: Date, required: true },
+  availableTo: { type: Date, required: true },
+  description: { type: String },
+  amenities: [String],
+  images: [String],
+});
 
-// Get a single room by ID
-export async function get(id: string) {
-  return await RoomModel.findOne({ id });
-}
+// Create the Room model
+const RoomModel = model<Room>("Room", RoomSchema);
 
-// Create a new room
-export async function create(room: any) {
-  const newRoom = new RoomModel(room);
-  return await newRoom.save();
-}
-
-// Update a room by ID
-export async function update(id: string, updatedRoom: any) {
-  return await RoomModel.findOneAndUpdate({ id }, updatedRoom, { new: true }).then((room) => {
-    if (!room) throw new Error(`${id} not updated`);
-    return room;
-  });
-}
-
-// Delete a room by ID
-export async function remove(id: string) {
-  return await RoomModel.findOneAndDelete({ id }).then((room) => {
-    if (!room) throw new Error(`${id} not deleted`);
-  });
-}
-
-export default { index, get, create, update, remove };
+// Service functions for CRUD operations
+export default {
+  index: async () => {
+    try {
+      return await RoomModel.find().exec();
+    } catch (err) {
+      throw new Error(`Failed to fetch rooms: ${err.message}`);
+    }
+  },
+  get: async (id) => {
+    try {
+      return await RoomModel.findById(id).exec();
+    } catch (err) {
+      throw new Error(`Failed to fetch room with ID ${id}: ${err.message}`);
+    }
+  },
+  create: async (room) => {
+    try {
+      return await new RoomModel(room).save();
+    } catch (err) {
+      throw new Error(`Failed to create room: ${err.message}`);
+    }
+  },
+  update: async (id, room) => {
+    try {
+      return await RoomModel.findByIdAndUpdate(id, room, { new: true }).exec();
+    } catch (err) {
+      throw new Error(`Failed to update room with ID ${id}: ${err.message}`);
+    }
+  },
+  remove: async (id) => {
+    try {
+      return await RoomModel.findByIdAndDelete(id).exec();
+    } catch (err) {
+      throw new Error(`Failed to delete room with ID ${id}: ${err.message}`);
+    }
+  },
+};

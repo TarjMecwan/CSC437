@@ -1,4 +1,3 @@
-"use strict";
 var __create = Object.create;
 var __defProp = Object.defineProperty;
 var __getOwnPropDesc = Object.getOwnPropertyDescriptor;
@@ -25,12 +24,14 @@ var import_express = __toESM(require("express"));
 var import_path = __toESM(require("path"));
 var import_mongo = require("./services/mongo");
 var import_rooms = __toESM(require("./routes/rooms"));
+var import_auth = __toESM(require("./routes/auth"));
 const app = (0, import_express.default)();
 const port = process.env.PORT || 3e3;
 (0, import_mongo.connect)("lab10db");
 app.use(import_express.default.json());
 app.use(import_express.default.static(import_path.default.join(__dirname, "../../proto/public")));
-app.use("/api/rooms", import_rooms.default);
+app.use("/auth", import_auth.default);
+app.use("/api/rooms", import_auth.authenticateUser, import_rooms.default);
 app.get("*", (req, res) => {
   res.sendFile(import_path.default.join(__dirname, "../../proto/public/index.html"));
 });

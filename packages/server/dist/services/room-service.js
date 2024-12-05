@@ -1,4 +1,3 @@
-"use strict";
 var __defProp = Object.defineProperty;
 var __getOwnPropDesc = Object.getOwnPropertyDescriptor;
 var __getOwnPropNames = Object.getOwnPropertyNames;
@@ -16,46 +15,77 @@ var __copyProps = (to, from, except, desc) => {
   return to;
 };
 var __toCommonJS = (mod) => __copyProps(__defProp({}, "__esModule", { value: true }), mod);
+var __async = (__this, __arguments, generator) => {
+  return new Promise((resolve, reject) => {
+    var fulfilled = (value) => {
+      try {
+        step(generator.next(value));
+      } catch (e) {
+        reject(e);
+      }
+    };
+    var rejected = (value) => {
+      try {
+        step(generator.throw(value));
+      } catch (e) {
+        reject(e);
+      }
+    };
+    var step = (x) => x.done ? resolve(x.value) : Promise.resolve(x.value).then(fulfilled, rejected);
+    step((generator = generator.apply(__this, __arguments)).next());
+  });
+};
 var room_service_exports = {};
 __export(room_service_exports, {
-  create: () => create,
-  default: () => room_service_default,
-  get: () => get,
-  index: () => index,
-  remove: () => remove,
-  update: () => update
+  default: () => room_service_default
 });
 module.exports = __toCommonJS(room_service_exports);
-var import_room = require("../models/room");
-async function index() {
-  return await import_room.RoomModel.find();
-}
-async function get(id) {
-  return await import_room.RoomModel.findOne({ id });
-}
-async function create(room) {
-  const newRoom = new import_room.RoomModel(room);
-  return await newRoom.save();
-}
-async function update(id, updatedRoom) {
-  return await import_room.RoomModel.findOneAndUpdate({ id }, updatedRoom, { new: true }).then((room) => {
-    if (!room)
-      throw new Error(`${id} not updated`);
-    return room;
-  });
-}
-async function remove(id) {
-  return await import_room.RoomModel.findOneAndDelete({ id }).then((room) => {
-    if (!room)
-      throw new Error(`${id} not deleted`);
-  });
-}
-var room_service_default = { index, get, create, update, remove };
-// Annotate the CommonJS export names for ESM import in node:
-0 && (module.exports = {
-  create,
-  get,
-  index,
-  remove,
-  update
+var import_mongoose = require("mongoose");
+const RoomSchema = new import_mongoose.Schema({
+  title: { type: String, required: true },
+  location: { type: String, required: true },
+  price: { type: Number, required: true },
+  availableFrom: { type: Date, required: true },
+  availableTo: { type: Date, required: true },
+  description: { type: String },
+  amenities: [String],
+  images: [String]
 });
+const RoomModel = (0, import_mongoose.model)("Room", RoomSchema);
+var room_service_default = {
+  index: () => __async(void 0, null, function* () {
+    try {
+      return yield RoomModel.find().exec();
+    } catch (err) {
+      throw new Error(`Failed to fetch rooms: ${err.message}`);
+    }
+  }),
+  get: (id) => __async(void 0, null, function* () {
+    try {
+      return yield RoomModel.findById(id).exec();
+    } catch (err) {
+      throw new Error(`Failed to fetch room with ID ${id}: ${err.message}`);
+    }
+  }),
+  create: (room) => __async(void 0, null, function* () {
+    try {
+      return yield new RoomModel(room).save();
+    } catch (err) {
+      throw new Error(`Failed to create room: ${err.message}`);
+    }
+  }),
+  update: (id, room) => __async(void 0, null, function* () {
+    try {
+      return yield RoomModel.findByIdAndUpdate(id, room, { new: true }).exec();
+    } catch (err) {
+      throw new Error(`Failed to update room with ID ${id}: ${err.message}`);
+    }
+  }),
+  remove: (id) => __async(void 0, null, function* () {
+    try {
+      return yield RoomModel.findByIdAndDelete(id).exec();
+    } catch (err) {
+      throw new Error(`Failed to delete room with ID ${id}: ${err.message}`);
+    }
+  })
+};

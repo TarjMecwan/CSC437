@@ -1,27 +1,32 @@
-import { Schema, model } from "mongoose";
+import mongoose, { Schema, Document } from "mongoose";
 
-interface Room {
+// Define the Room interface
+export interface Room extends Document {
   id: string;
   title: string;
   location: string;
   price: number;
-  availableFrom: Date;
-  availableTo: Date;
   description: string;
+  availableFrom: string;
+  availableTo: string;
   amenities: string[];
   images: string[];
 }
 
-const RoomSchema = new Schema<Room>({
-  id: { type: String, required: true },
-  title: { type: String, required: true },
-  location: { type: String, required: true },
-  price: { type: Number, required: true },
-  availableFrom: { type: Date, required: true },
-  availableTo: { type: Date, required: true },
-  description: { type: String, required: true },
-  amenities: { type: [String], required: true },
-  images: { type: [String], required: true },
-});
+// Define the Room schema
+const RoomSchema = new Schema<Room>(
+  {
+    title: { type: String, required: true },
+    location: { type: String, required: true },
+    price: { type: Number, required: true },
+    description: { type: String, required: true },
+    availableFrom: { type: String, required: true },
+    availableTo: { type: String, required: true },
+    amenities: { type: [String], required: true },
+    images: { type: [String], required: true },
+  },
+  { collection: "rooms" } // Specify the collection name
+);
 
-export const RoomModel = model<Room>("Room", RoomSchema);
+// Create the Room model
+export const RoomModel = mongoose.model<Room>("Room", RoomSchema);
