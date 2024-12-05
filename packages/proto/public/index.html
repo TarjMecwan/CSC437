@@ -123,34 +123,40 @@
       padding: 20px;
       border-radius: 5px;
       text-align: center;
-      width: 300px;
+      width: 90%;
+      max-width: 500px;
+      position: relative;
     }
 
-    .modal-content label {
-      display: block;
-      margin-bottom: 5px;
-      font-weight: bold;
-    }
-
-    .modal-content input {
+    .modal-content img {
       width: 100%;
-      padding: 10px;
+      height: auto;
+      border-radius: 8px;
       margin-bottom: 15px;
-      border: 1px solid #ccc;
-      border-radius: 4px;
     }
 
-    .modal-content button {
-      padding: 10px 20px;
-      background-color: #007BFF;
+    .modal-content h3 {
+      margin: 0.5rem 0;
+    }
+
+    .modal-content p {
+      margin: 0.5rem 0;
+    }
+
+    .modal-close {
+      position: absolute;
+      top: 10px;
+      right: 10px;
+      background: red;
       color: white;
       border: none;
-      border-radius: 5px;
+      border-radius: 50%;
+      width: 30px;
+      height: 30px;
+      font-size: 1.5rem;
       cursor: pointer;
-    }
-
-    .modal-content button:hover {
-      background-color: #0056b3;
+      text-align: center;
+      line-height: 30px;
     }
   </style>
 </head>
@@ -203,6 +209,19 @@
     </div>
   </div>
 
+  <!-- Details Modal -->
+  <div class="modal" id="detailsModal">
+    <div class="modal-content">
+      <button class="modal-close" id="modalClose">&times;</button>
+      <img id="modalImage" src="" alt="Listing Image">
+      <h3 id="modalTitle"></h3>
+      <p id="modalDescription"></p>
+      <p><strong>Price:</strong> $<span id="modalPrice"></span></p>
+      <p><strong>Amenities:</strong> <span id="modalAmenities"></span></p>
+      <p><strong>Address:</strong> <span id="modalAddress"></span></p>
+    </div>
+  </div>
+
   <footer>
     &copy; 2024 SubLet | All Rights Reserved
   </footer>
@@ -224,22 +243,54 @@
           return;
         }
 
-        const listingsHTML = listings.map(listing => `
+        const listingsHTML = listings.map((listing, index) => `
           <div class="listing">
             <img src="${listing.images?.[0] ? `${baseURL}${listing.images[0]}` : '/default-image.png'}" alt="${listing.title}" class="listing-image">
             <h3>${listing.title}</h3>
             <p>${listing.description}</p>
             <p><strong>Price:</strong> $${listing.price}</p>
-            <button onclick="location.href='/listings/${listing._id}'">View Details</button>
+            <button data-index="${index}" class="view-details">View Details</button>
           </div>
         `).join("");
 
         listingsContainer.innerHTML = listingsHTML;
+
+        document.querySelectorAll(".view-details").forEach((btn) => {
+          btn.addEventListener("click", (e) => {
+            e.preventDefault();
+            const listing = listings[btn.dataset.index];
+            openDetailsModal(listing);
+          });
+        });
       } catch (error) {
         console.error(error);
         listingsContainer.innerHTML = "<p>Failed to load listings. Please try again later.</p>";
       }
     }
+
+    function openDetailsModal(listing) {
+      const modal = document.getElementById("detailsModal");
+
+      document.getElementById("modalImage").src = listing.images?.[0] ? `${baseURL}${listing.images[0]}` : '/default-image.png';
+      document.getElementById("modalTitle").textContent = listing.title;
+      document.getElementById("modalDescription").textContent = listing.description;
+      document.getElementById("modalPrice").textContent = listing.price;
+      document.getElementById("modalAmenities").textContent = listing.amenities?.join(", ") || "None";
+      document.getElementById("modalAddress").textContent = listing.location || "Not provided";
+
+      modal.classList.add("active");
+    }
+
+    function closeDetailsModal() {
+      const modal = document.getElementById("detailsModal");
+      modal.classList.remove("active");
+    }
+
+    document.getElementById("modalClose").addEventListener("click", closeDetailsModal);
+
+    document.getElementById("detailsModal").addEventListener("click", (e) => {
+      if (e.target.id === "detailsModal") closeDetailsModal();
+    });
 
     async function handleLogin(event) {
       event.preventDefault();
