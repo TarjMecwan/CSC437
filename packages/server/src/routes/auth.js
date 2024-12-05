@@ -43,35 +43,45 @@ export function authenticateUser(req: Request, res: Response, next: NextFunction
 }
 
 // Register route
-router.post("/register", (req: Request, res: Response) => {
-  const { username, password } = req.body;
-
-  if (!username || !password) {
-    res.status(400).send("Invalid input data.");
-    return;
-  }
-
-  credentials
-    .create(username, password)
-    .then((creds) => generateAccessToken(creds.username))
-    .then((token) => res.status(201).send({ token }))
-    .catch((err) => res.status(400).send(err));
-});
+router.post("/register", async (req: Request, res: Response) => {
+    const { username, password } = req.body;
+  
+    if (!username || !password) {
+      res.status(400).send("Invalid input data.");
+      return;
+    }
+  
+    try {
+      console.log("Registering user:", username); // Debug log
+      const creds = await credentials.create(username, password);
+      const token = await generateAccessToken(creds.username);
+      res.status(201).send({ token });
+    } catch (err) {
+      console.error("Registration error:", err); // Debug log
+      res.status(400).send(err);
+    }
+  });
+  
 
 // Login route
-router.post("/login", (req: Request, res: Response) => {
-  const { username, password } = req.body;
-
-  if (!username || !password) {
-    res.status(400).send("Invalid input data.");
-    return;
-  }
-
-  credentials
-    .verify(username, password)
-    .then((goodUser) => generateAccessToken(goodUser))
-    .then((token) => res.status(200).send({ token }))
-    .catch(() => res.status(401).send("Unauthorized"));
-});
+router.post("/login", async (req: Request, res: Response) => {
+    const { username, password } = req.body;
+  
+    if (!username || !password) {
+      res.status(400).send("Invalid input data.");
+      return;
+    }
+  
+    try {
+      console.log("User logging in:", username); // Debug log
+      const goodUser = await credentials.verify(username, password);
+      const token = await generateAccessToken(goodUser);
+      res.status(200).send({ token });
+    } catch (err) {
+      console.error("Login error:", err); // Debug log
+      res.status(401).send("Unauthorized");
+    }
+  });
+  
 
 export default router;

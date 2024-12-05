@@ -1,11 +1,6 @@
 export class RoomListingsElement extends HTMLElement {
   static template = document.createElement("template");
   static styles = `
-    :host {
-      display: block;
-      margin: 1rem 0;
-    }
-
     .room-card {
       border: 1px solid #ddd;
       border-radius: 8px;
@@ -14,28 +9,17 @@ export class RoomListingsElement extends HTMLElement {
       background-color: #fff;
       box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
     }
-
-    .room-card h3 {
-      margin: 0 0 8px 0;
-    }
-
-    .room-card p {
-      margin: 4px 0;
-    }
-
     .room-card .images {
       display: flex;
       flex-wrap: wrap;
       gap: 8px;
       margin-top: 16px;
     }
-
-    .room-card .room-image {
+    .room-card img {
       width: 100px;
       height: 100px;
       object-fit: cover;
       border-radius: 4px;
-      box-shadow: 0 2px 4px rgba(0, 0, 0, 0.2);
     }
   `;
 
@@ -58,21 +42,12 @@ export class RoomListingsElement extends HTMLElement {
 
   async hydrate(url) {
     try {
-      const token = localStorage.getItem("authToken"); // Retrieve the token from localStorage
-      if (!token) {
-        throw new Error("User not authenticated. Please log in.");
-      }
-
+      const token = localStorage.getItem("authToken");
       const res = await fetch(url, {
-        headers: {
-          Authorization: `Bearer ${token}`, // Include the Authorization header
-        },
+        headers: { Authorization: `Bearer ${token}` },
       });
 
-      if (!res.ok) {
-        throw new Error(`Failed to fetch: ${res.statusText}`);
-      }
-
+      if (!res.ok) throw new Error(`Failed to fetch: ${res.statusText}`);
       const rooms = await res.json();
       this.renderRooms(rooms);
     } catch (error) {
@@ -82,40 +57,24 @@ export class RoomListingsElement extends HTMLElement {
 
   renderRooms(rooms) {
     const container = this.shadowRoot.querySelector("#listings-container");
-    container.innerHTML = ""; // Clear previous listings
+    container.innerHTML = "";
 
     rooms.forEach((room) => {
       const roomElement = document.createElement("div");
       roomElement.classList.add("room-card");
 
-      // Generate HTML for room images
       const imagesHtml = (room.images || [])
-        .map(
-          (imgPath) => `
-          <img src="${imgPath}" alt="${room.title}" class="room-image" />
-        `
-        )
+        .map((img) => `<img src="${img}" alt="${room.title}" />`)
         .join("");
 
-      // Generate HTML for room details
       roomElement.innerHTML = `
         <h3>${room.title}</h3>
         <p><strong>Location:</strong> ${room.location}</p>
         <p><strong>Price:</strong> $${room.price}</p>
-        <p><strong>Available:</strong> ${new Date(
-          room.availableFrom
-        ).toLocaleDateString()} to ${new Date(
-        room.availableTo
-      ).toLocaleDateString()}</p>
+        <p><strong>Available:</strong> ${new Date(room.availableFrom).toLocaleDateString()} to ${new Date(room.availableTo).toLocaleDateString()}</p>
         <p><strong>Description:</strong> ${room.description}</p>
-        <ul><strong>Amenities:</strong>
-          ${room.amenities
-            .map((a) => `<li>${a}</li>`)
-            .join("") || "<li>No amenities listed</li>"}
-        </ul>
-        <div class="images">
-          ${imagesHtml}
-        </div>
+        <ul><strong>Amenities:</strong> ${room.amenities.map((a) => `<li>${a}</li>`).join("")}</ul>
+        <div class="images">${imagesHtml}</div>
       `;
       container.appendChild(roomElement);
     });

@@ -2,33 +2,21 @@ import express, { Request, Response } from "express";
 import multer from "multer";
 import path from "path";
 import Rooms from "../services/room-service"; // Import the service layer
-import { authenticateUser } from "./auth"; // Import the authentication middleware
 import { Room } from "../models/room"; // Import the Room model interface
 
 const router = express.Router();
 
-// Configure multer for file uploads
+// Set up Multer for image uploads
 const storage = multer.diskStorage({
-  destination: "./uploads", // Directory to store images
+  destination: (req, file, cb) => {
+    cb(null, path.join(__dirname, "../../uploads")); // Save files to /uploads directory
+  },
   filename: (req, file, cb) => {
-    cb(null, `${Date.now()}-${file.originalname}`);
+    cb(null, `${Date.now()}-${file.originalname}`); // Add timestamp to file name
   },
 });
+
 const upload = multer({ storage });
-
-// Serve the uploaded images
-router.use("/uploads", express.static(path.join(__dirname, "../../uploads")));
-
-// Image upload endpoint
-router.post("/upload", authenticateUser, upload.single("image"), (req: Request, res: Response) => {
-  if (!req.file) {
-    return res.status(400).json({ error: "No file uploaded" });
-  }
-
-  // Return the file path to the client
-  const filePath = `/uploads/${req.file.filename}`;
-  res.status(200).json({ path: filePath });
-});
 
 // Get all rooms
 router.get("/", (_, res: Response) => {
@@ -42,60 +30,45 @@ router.get("/:id", (req: Request, res: Response) => {
   const { id } = req.params;
 
   Rooms.get(id)
-    .then((room: Room | null) => {
-      if (!room) {
-        return res.status(404).json({ error: "Room not found" });
-      }
-      res.json(room);
-    })
-    .catch((err) => res.status(500).send(err));
+    .then((room: Room) => res.json(room))
+    .catch((err) => res.status(404).send(err));
 });
 
-// Create a new room
-router.post("/", authenticateUser, (req: Request, res: Response) => {
-  const newRoom = req.body;
+// Create a new room with image uploads
+router.post("/", upload.array("images"), (req: Request, res: Response) => {
+  const images = req.files
+    ? (req.files as Express.Multer.File[]).map((file) => {
+        const path = `/uploads/${file.filename}`;
+        console.log("Uploaded File Path:", path); // Logs the relative path
+        console.log("Absolute File Path:", file.path); // Logs the full server path
+        return path;
+      })
+    : [];
+  const newRoom = { ...req.body, images };
 
   Rooms.create(newRoom)
     .then((room: Room) => res.status(201).json(room))
-    .catch((err) => {
-      console.error("Error creating room:", err);
-      res.status(500).json({ error: "Failed to create room", details: err.message });
-    });
+    .catch((err) => res.status(500).send(err));
 });
 
+
 // Update a room
-router.put("/:id", authenticateUser, (req: Request, res: Response) => {
+router.put("/:id", (req: Request, res: Response) => {
   const { id } = req.params;
   const updatedRoom = req.body;
 
   Rooms.update(id, updatedRoom)
-    .then((room: Room | null) => {
-      if (!room) {
-        return res.status(404).json({ error: "Room not found" });
-      }
-      res.json(room);
-    })
-    .catch((err) => {
-      console.error("Error updating room:", err);
-      res.status(500).json({ error: "Failed to update room", details: err.message });
-    });
+    .then((room: Room) => res.json(room))
+    .catch((err) => res.status(404).send(err));
 });
 
 // Delete a room
-router.delete("/:id", authenticateUser, (req: Request, res: Response) => {
+router.delete("/:id", (req: Request, res: Response) => {
   const { id } = req.params;
 
   Rooms.remove(id)
-    .then((result) => {
-      if (!result) {
-        return res.status(404).json({ error: "Room not found" });
-      }
-      res.status(204).end();
-    })
-    .catch((err) => {
-      console.error("Error deleting room:", err);
-      res.status(500).json({ error: "Failed to delete room", details: err.message });
-    });
+    .then(() => res.status(204).end())
+    .catch((err) => res.status(404).send(err));
 });
 
 export default router;

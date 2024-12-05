@@ -1,9 +1,26 @@
 var __create = Object.create;
 var __defProp = Object.defineProperty;
+var __defProps = Object.defineProperties;
 var __getOwnPropDesc = Object.getOwnPropertyDescriptor;
+var __getOwnPropDescs = Object.getOwnPropertyDescriptors;
 var __getOwnPropNames = Object.getOwnPropertyNames;
+var __getOwnPropSymbols = Object.getOwnPropertySymbols;
 var __getProtoOf = Object.getPrototypeOf;
 var __hasOwnProp = Object.prototype.hasOwnProperty;
+var __propIsEnum = Object.prototype.propertyIsEnumerable;
+var __defNormalProp = (obj, key, value) => key in obj ? __defProp(obj, key, { enumerable: true, configurable: true, writable: true, value }) : obj[key] = value;
+var __spreadValues = (a, b) => {
+  for (var prop in b || (b = {}))
+    if (__hasOwnProp.call(b, prop))
+      __defNormalProp(a, prop, b[prop]);
+  if (__getOwnPropSymbols)
+    for (var prop of __getOwnPropSymbols(b)) {
+      if (__propIsEnum.call(b, prop))
+        __defNormalProp(a, prop, b[prop]);
+    }
+  return a;
+};
+var __spreadProps = (a, b) => __defProps(a, __getOwnPropDescs(b));
 var __export = (target, all) => {
   for (var name in all)
     __defProp(target, name, { get: all[name], enumerable: true });
@@ -27,26 +44,42 @@ var __toESM = (mod, isNodeMode, target) => (target = mod != null ? __create(__ge
 var __toCommonJS = (mod) => __copyProps(__defProp({}, "__esModule", { value: true }), mod);
 var room_exports = {};
 __export(room_exports, {
-  RoomModel: () => RoomModel
+  default: () => room_default
 });
 module.exports = __toCommonJS(room_exports);
-var import_mongoose = __toESM(require("mongoose"));
-const RoomSchema = new import_mongoose.Schema(
-  {
-    title: { type: String, required: true },
-    location: { type: String, required: true },
-    price: { type: Number, required: true },
-    description: { type: String, required: true },
-    availableFrom: { type: String, required: true },
-    availableTo: { type: String, required: true },
-    amenities: { type: [String], required: true },
-    images: { type: [String], required: true }
+var import_express = __toESM(require("express"));
+var import_multer = __toESM(require("multer"));
+var import_path = __toESM(require("path"));
+var import_room_service = __toESM(require("../services/room-service"));
+const router = import_express.default.Router();
+const storage = import_multer.default.diskStorage({
+  destination: (req, file, cb) => {
+    cb(null, import_path.default.join(__dirname, "../../uploads"));
   },
-  { collection: "rooms" }
-  // Specify the collection name
-);
-const RoomModel = import_mongoose.default.model("Room", RoomSchema);
-// Annotate the CommonJS export names for ESM import in node:
-0 && (module.exports = {
-  RoomModel
+  filename: (req, file, cb) => {
+    cb(null, `${Date.now()}-${file.originalname}`);
+  }
 });
+const upload = (0, import_multer.default)({ storage });
+router.get("/", (_, res) => {
+  import_room_service.default.index().then((list) => res.json(list)).catch((err) => res.status(500).send(err));
+});
+router.get("/:id", (req, res) => {
+  const { id } = req.params;
+  import_room_service.default.get(id).then((room) => res.json(room)).catch((err) => res.status(404).send(err));
+});
+router.post("/", upload.array("images"), (req, res) => {
+  const images = req.files ? req.files.map((file) => `/uploads/${file.filename}`) : [];
+  const newRoom = __spreadProps(__spreadValues({}, req.body), { images });
+  import_room_service.default.create(newRoom).then((room) => res.status(201).json(room)).catch((err) => res.status(500).send(err));
+});
+router.put("/:id", (req, res) => {
+  const { id } = req.params;
+  const updatedRoom = req.body;
+  import_room_service.default.update(id, updatedRoom).then((room) => res.json(room)).catch((err) => res.status(404).send(err));
+});
+router.delete("/:id", (req, res) => {
+  const { id } = req.params;
+  import_room_service.default.remove(id).then(() => res.status(204).end()).catch((err) => res.status(404).send(err));
+});
+var room_default = router;

@@ -29,12 +29,15 @@ const app = (0, import_express.default)();
 const port = process.env.PORT || 3e3;
 (0, import_mongo.connect)("lab10db");
 app.use(import_express.default.json());
+app.use("/uploads", import_express.default.static(import_path.default.join(__dirname, "../uploads")));
+console.log("Resolved uploads path:", import_path.default.join(__dirname, "../uploads"));
 app.use(import_express.default.static(import_path.default.join(__dirname, "../../proto/public")));
 app.use("/auth", import_auth.default);
-app.use("/api/rooms", import_auth.authenticateUser, import_rooms.default);
+app.use("/api/rooms", import_rooms.default);
 app.get("*", (req, res) => {
   res.sendFile(import_path.default.join(__dirname, "../../proto/public/index.html"));
 });
 app.listen(port, () => {
   console.log(`Server running at http://localhost:${port}`);
+  console.log("Serving uploads from:", import_path.default.join(__dirname, "../uploads"));
 });

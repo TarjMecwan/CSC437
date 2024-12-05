@@ -1,9 +1,26 @@
 var __create = Object.create;
 var __defProp = Object.defineProperty;
+var __defProps = Object.defineProperties;
 var __getOwnPropDesc = Object.getOwnPropertyDescriptor;
+var __getOwnPropDescs = Object.getOwnPropertyDescriptors;
 var __getOwnPropNames = Object.getOwnPropertyNames;
+var __getOwnPropSymbols = Object.getOwnPropertySymbols;
 var __getProtoOf = Object.getPrototypeOf;
 var __hasOwnProp = Object.prototype.hasOwnProperty;
+var __propIsEnum = Object.prototype.propertyIsEnumerable;
+var __defNormalProp = (obj, key, value) => key in obj ? __defProp(obj, key, { enumerable: true, configurable: true, writable: true, value }) : obj[key] = value;
+var __spreadValues = (a, b) => {
+  for (var prop in b || (b = {}))
+    if (__hasOwnProp.call(b, prop))
+      __defNormalProp(a, prop, b[prop]);
+  if (__getOwnPropSymbols)
+    for (var prop of __getOwnPropSymbols(b)) {
+      if (__propIsEnum.call(b, prop))
+        __defNormalProp(a, prop, b[prop]);
+    }
+  return a;
+};
+var __spreadProps = (a, b) => __defProps(a, __getOwnPropDescs(b));
 var __export = (target, all) => {
   for (var name in all)
     __defProp(target, name, { get: all[name], enumerable: true });
@@ -34,66 +51,40 @@ var import_express = __toESM(require("express"));
 var import_multer = __toESM(require("multer"));
 var import_path = __toESM(require("path"));
 var import_room_service = __toESM(require("../services/room-service"));
-var import_auth = require("./auth");
 const router = import_express.default.Router();
 const storage = import_multer.default.diskStorage({
-  destination: "./uploads",
-  // Directory to store images
+  destination: (req, file, cb) => {
+    cb(null, import_path.default.join(__dirname, "../../uploads"));
+  },
   filename: (req, file, cb) => {
     cb(null, `${Date.now()}-${file.originalname}`);
   }
 });
 const upload = (0, import_multer.default)({ storage });
-router.use("/uploads", import_express.default.static(import_path.default.join(__dirname, "../../uploads")));
-router.post("/upload", import_auth.authenticateUser, upload.single("image"), (req, res) => {
-  if (!req.file) {
-    return res.status(400).json({ error: "No file uploaded" });
-  }
-  const filePath = `/uploads/${req.file.filename}`;
-  res.status(200).json({ path: filePath });
-});
 router.get("/", (_, res) => {
   import_room_service.default.index().then((list) => res.json(list)).catch((err) => res.status(500).send(err));
 });
 router.get("/:id", (req, res) => {
   const { id } = req.params;
-  import_room_service.default.get(id).then((room) => {
-    if (!room) {
-      return res.status(404).json({ error: "Room not found" });
-    }
-    res.json(room);
-  }).catch((err) => res.status(500).send(err));
+  import_room_service.default.get(id).then((room) => res.json(room)).catch((err) => res.status(404).send(err));
 });
-router.post("/", import_auth.authenticateUser, (req, res) => {
-  const newRoom = req.body;
-  import_room_service.default.create(newRoom).then((room) => res.status(201).json(room)).catch((err) => {
-    console.error("Error creating room:", err);
-    res.status(500).json({ error: "Failed to create room", details: err.message });
-  });
+router.post("/", upload.array("images"), (req, res) => {
+  const images = req.files ? req.files.map((file) => {
+    const path2 = `/uploads/${file.filename}`;
+    console.log("Uploaded File Path:", path2);
+    console.log("Absolute File Path:", file.path);
+    return path2;
+  }) : [];
+  const newRoom = __spreadProps(__spreadValues({}, req.body), { images });
+  import_room_service.default.create(newRoom).then((room) => res.status(201).json(room)).catch((err) => res.status(500).send(err));
 });
-router.put("/:id", import_auth.authenticateUser, (req, res) => {
+router.put("/:id", (req, res) => {
   const { id } = req.params;
   const updatedRoom = req.body;
-  import_room_service.default.update(id, updatedRoom).then((room) => {
-    if (!room) {
-      return res.status(404).json({ error: "Room not found" });
-    }
-    res.json(room);
-  }).catch((err) => {
-    console.error("Error updating room:", err);
-    res.status(500).json({ error: "Failed to update room", details: err.message });
-  });
+  import_room_service.default.update(id, updatedRoom).then((room) => res.json(room)).catch((err) => res.status(404).send(err));
 });
-router.delete("/:id", import_auth.authenticateUser, (req, res) => {
+router.delete("/:id", (req, res) => {
   const { id } = req.params;
-  import_room_service.default.remove(id).then((result) => {
-    if (!result) {
-      return res.status(404).json({ error: "Room not found" });
-    }
-    res.status(204).end();
-  }).catch((err) => {
-    console.error("Error deleting room:", err);
-    res.status(500).json({ error: "Failed to delete room", details: err.message });
-  });
+  import_room_service.default.remove(id).then(() => res.status(204).end()).catch((err) => res.status(404).send(err));
 });
 var rooms_default = router;

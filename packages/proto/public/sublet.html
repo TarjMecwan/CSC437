@@ -1,225 +1,76 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>SubLet | Sublet Your Place</title>
-
-    <!-- Favicon -->
-    <link rel="icon" href="https://img.icons8.com/?size=100&id=15466&format=png&color=000000" type="image/png">
-
-    <!-- Linking to design tokens and the main CSS file -->
-    <link rel="stylesheet" href="/styles/tokens.css">
-    <link rel="stylesheet" href="/styles/page.css">
-    <link rel="stylesheet" href="/styles/index.css">
-
-    <style>
-        body {
-            font-family: Arial, sans-serif;
-            margin: 0;
-            padding: 0;
-            background-color: #f8f8f8;
-        }
-
-        header {
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            background-color: #007BFF;
-            color: white;
-            padding: 20px;
-        }
-
-        header h1 {
-            margin: 0;
-            font-size: 24px;
-        }
-
-        .container {
-            padding: 20px;
-            max-width: 800px;
-            margin: auto;
-            background: white;
-            border-radius: 10px;
-            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
-        }
-
-        .form-group {
-            margin-bottom: 15px;
-        }
-
-        label {
-            display: block;
-            margin-bottom: 5px;
-            font-weight: bold;
-        }
-
-        input[type="text"],
-        input[type="number"],
-        input[type="date"],
-        input[type="file"],
-        textarea {
-            width: 100%;
-            padding: 10px;
-            border: 1px solid #ccc;
-            border-radius: 4px;
-            box-sizing: border-box;
-        }
-
-        textarea {
-            resize: vertical;
-            height: 100px;
-        }
-
-        button {
-            background-color: #007BFF;
-            color: white;
-            padding: 12px;
-            border: none;
-            border-radius: 5px;
-            cursor: pointer;
-            width: 100%;
-            font-size: 16px;
-            margin-top: 10px;
-        }
-
-        button:hover {
-            background-color: #0056b3;
-        }
-
-        .footer {
-            text-align: center;
-            padding: 20px;
-            margin-top: 20px;
-            background-color: #007BFF;
-            color: white;
-        }
-    </style>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>SubLet | Sublet Your Place</title>
+  <link rel="stylesheet" href="/styles/tokens.css">
+  <link rel="stylesheet" href="/styles/page.css">
+  <link rel="stylesheet" href="/styles/index.css">
 </head>
 <body>
+  <header>
+    <h1>Sublet Your Place</h1>
+    <a href="index.html" class="back-button">Back to Listings</a>
+  </header>
 
-    <!-- Header section -->
-    <header>
-        <h1>Sublet Your Place</h1>
-        <div class="login-signup-container">
-            <a href="index.html" class="login-button">Back to Listings</a>
-        </div>
-    </header>
+  <main>
+    <h2>Upload Your Listing</h2>
+    <form id="sublet-form" enctype="multipart/form-data">
+      <label for="title">Listing Title</label>
+      <input type="text" id="title" name="title" required placeholder="e.g., Cozy Apartment" />
 
-    <!-- Main content -->
-    <div class="container">
-        <h2>Upload Your Listing</h2>
-        <form id="sublet-form">
-            <div class="form-group">
-                <label for="title">Listing Title</label>
-                <input type="text" id="title" name="title" required placeholder="e.g., Cozy 2 Bedroom Apartment">
-            </div>
+      <label for="address">Address</label>
+      <input type="text" id="address" name="location" required placeholder="e.g., 123 Main St" />
 
-            <div class="form-group">
-                <label for="location">Address</label>
-                <input type="text" id="location" name="location" required placeholder="e.g., 555 Ramona Dr, San Luis Obispo, CA 93405">
-            </div>
+      <label for="price">Price (per month)</label>
+      <input type="number" id="price" name="price" required placeholder="e.g., 1500" />
 
-            <div class="form-group">
-                <label for="price">Price (per month)</label>
-                <input type="number" id="price" name="price" required placeholder="$">
-            </div>
+      <label for="amenities">Amenities (comma-separated)</label>
+      <input type="text" id="amenities" name="amenities" placeholder="e.g., WiFi, Pool" />
 
-            <div class="form-group">
-                <label for="availableFrom">Available From</label>
-                <input type="date" id="availableFrom" name="availableFrom" required>
-            </div>
+      <label for="description">Description</label>
+      <textarea id="description" name="description" placeholder="Write a short description..."></textarea>
 
-            <div class="form-group">
-                <label for="availableTo">Available To</label>
-                <input type="date" id="availableTo" name="availableTo" required>
-            </div>
+      <label for="availableFrom">Available From</label>
+      <input type="date" id="availableFrom" name="availableFrom" required />
 
-            <div class="form-group">
-                <label for="amenities">Amenities</label>
-                <input type="text" id="amenities" name="amenities" placeholder="e.g., WiFi, Parking, Pool">
-            </div>
+      <label for="availableTo">Available To</label>
+      <input type="date" id="availableTo" name="availableTo" required />
 
-            <div class="form-group">
-                <label for="description">Description</label>
-                <textarea id="description" name="description" required placeholder="Write a brief description of your place..."></textarea>
-            </div>
+      <label for="images">Upload Images</label>
+      <input type="file" id="images" name="images" accept="image/*" multiple />
 
-            <div class="form-group">
-                <label for="images">Upload Images</label>
-                <input type="file" id="images" name="images" accept="image/*" multiple>
-            </div>
+      <button type="submit">Submit Listing</button>
+    </form>
+  </main>
 
-            <button type="submit">Submit Listing</button>
-        </form>
-    </div>
+  <footer>
+    &copy; 2024 SubLet | All Rights Reserved
+  </footer>
 
-    <!-- Footer -->
-    <footer class="footer">
-        &copy; 2024 SubLet | All Rights Reserved
-    </footer>
+  <script>
+    document.getElementById("sublet-form").addEventListener("submit", async function (event) {
+      event.preventDefault();
 
-    <script>
-        document.getElementById("sublet-form").addEventListener("submit", async function (event) {
-            event.preventDefault();
+      const formData = new FormData(this);
+      const response = await fetch("/api/rooms", {
+        method: "POST",
+        headers: {
+          Authorization: `Bearer ${localStorage.getItem("authToken")}`,
+        },
+        body: formData,
+      });
 
-            const form = event.target;
+      if (!response.ok) {
+        alert("Failed to submit listing");
+        console.error(await response.text());
+        return;
+      }
 
-            // Collect form data
-            const formData = new FormData(form);
-
-            // Convert amenities to an array
-            const amenities = formData.get("amenities").split(",").map((a) => a.trim());
-
-            // Collect image file names
-            const images = Array.from(form.images.files).map((file) => file.name);
-
-            // Create the listing object
-            const listing = {
-                title: formData.get("title"),
-                location: formData.get("location"),
-                price: Number(formData.get("price")),
-                availableFrom: formData.get("availableFrom"),
-                availableTo: formData.get("availableTo"),
-                description: formData.get("description"),
-                amenities: amenities,
-                images: images,
-            };
-
-            console.log("Submitting listing:", listing); // Debugging: Log the data being sent
-
-            try {
-                // Retrieve the token from localStorage
-                const token = localStorage.getItem("authToken");
-                if (!token) {
-                    throw new Error("You must be logged in to submit a listing.");
-                }
-
-                // Send the API request
-                const response = await fetch("/api/rooms", {
-                    method: "POST",
-                    headers: {
-                        "Content-Type": "application/json",
-                        Authorization: `Bearer ${token}`,
-                    },
-                    body: JSON.stringify(listing),
-                });
-
-                // Handle the response
-                if (!response.ok) {
-                    throw new Error(`Failed to submit listing: ${response.statusText}`);
-                }
-
-                const result = await response.json();
-                console.log("Listing submitted successfully:", result); // Debugging: Log the response
-
-                alert("Listing submitted successfully!");
-                form.reset();
-            } catch (error) {
-                console.error("Error submitting listing:", error);
-                alert(error.message);
-            }
-        });
-    </script>
+      alert("Listing submitted successfully!");
+      window.location.href = "index.html";
+    });
+  </script>
 </body>
 </html>
